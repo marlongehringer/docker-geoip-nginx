@@ -14,8 +14,10 @@ ENV PYTHON_PACKAGES ipaddr pygeoip
 ENV GEOLITE2LEGACY_BRANCH master
 ENV GEOLITE2LEGACY_ENCODING utf-8
 
-RUN mkdir /tmp/build \
-  && cd /tmp/build \
+ENV BUILD_DIR /tmp/build
+
+RUN mkdir $BUILD_DIR \
+  && cd $BUILD_DIR \
   && apk --no-cache --update add $BUILD_PACKAGES \
   && pip --no-cache-dir install $PYTHON_PACKAGES \
   && curl -L -o geolite2legacy.zip https://github.com/sherpya/geolite2legacy/archive/$GEOLITE2LEGACY_BRANCH.zip \
@@ -28,6 +30,7 @@ RUN mkdir /tmp/build \
   && apk del $BUILD_PACKAGES \
   && rm -rf /var/cache/apk/* \
   && mkdir -p $OUTPUT_DIRECTORY \
-  && mv $OUTPUT_FILE $OUTPUT_DIRECTORY/$OUTPUT_FILE
+  && mv $OUTPUT_FILE $OUTPUT_DIRECTORY/$OUTPUT_FILE \
+  && rm -rf $BUILD_DIR
 
 EXPOSE 80
